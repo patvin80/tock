@@ -12,7 +12,7 @@ class UserData(models.Model):
     end_date = models.DateField(blank=True, null=True)
     current_employee = models.BooleanField(default=True)
     billable_employee = models.BooleanField(default=True)
-    organization_1 = models.CharField(max_length=200, blank=True, default='18F')
+    organization_1 = models.CharField(max_length=200, blank=True)
     organization_2 = models.CharField(max_length=200, blank=True)
     organization_3 = models.CharField(max_length=200, blank=True)
 
