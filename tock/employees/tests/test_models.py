@@ -10,9 +10,13 @@ class UserDataTests(TestCase):
     def setUp(self):
         self.regular_user = get_user_model().objects.create(
             username='aaron.snow')
-        userdata = UserData(user=self.regular_user)
+        userdata = userdata(user=self.regular_user)
         userdata.start_date = datetime.date(2014, 1, 1)
         userdata.end_date = datetime.date(2016, 1, 1)
+        userdata.organization_1 = '18F'
+        userdata.organization_2 = 'Operations'
+        userdata.current_employee = True
+        userdata.billable_employee = True
         userdata.save()
 
     def test_user_data_is_stored(self):
@@ -24,6 +28,7 @@ class UserDataTests(TestCase):
         self.assertEqual(
             userdata.end_date,
             datetime.date(2016, 1, 1))
+        self.assertTrue(userdata.current_employee)
 
     def test_check_user_data_connected_to_user_model(self):
         """ Check that user data can be retrieved from User Model """
@@ -33,8 +38,13 @@ class UserDataTests(TestCase):
         self.assertEqual(
             self.regular_user.user_data.end_date,
             datetime.date(2016, 1, 1))
-    
+
     def test_user_data_current_employee_default_is_true(self):
         """ Check that the user data is initalized with the current
         employee value being true """
         self.assertTrue(self.regular_user.user_data.current_employee)
+
+    def test_user_data_billable_employee_default_is_true(self):
+        """ Check that the user data is initalized with the billable
+        employee value being true """
+        self.assertTrue(self.regular_user.user_data.billable_employee)

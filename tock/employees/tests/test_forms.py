@@ -13,12 +13,16 @@ class UserFormTests(TestCase):
             'last_name': 'User',
             'start_date': '2014-01-01',
             'end_date': '2016-01-01',
-            'current_employee': False
+            'current_employee': False,
+            'organization_1':'18F',
+            'organization_2':'Operations'
+            'organization_3':'Finance'
         }
         form = UserForm(form_data)
         self.assertTrue(form.is_valid())
         self.assertEqual(form.cleaned_data['first_name'], "Test")
         self.assertEqual(form.cleaned_data['last_name'], "User")
+        self.assertEqual(form.cleaned_data['organization_3'],"Finance")
         self.assertEqual(
             form.cleaned_data['start_date'], datetime.date(2014, 1, 1))
         self.assertEqual(
