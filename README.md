@@ -1,5 +1,6 @@
 tock
 ===============
+docker run -v .tock:/tock
 
 We use Tock to track our time. You can read more about Tock in this [blog post](https://18f.gsa.gov/2015/05/21/tockingtime/) about its features.
 

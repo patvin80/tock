@@ -1,3 +1,4 @@
+rsync -avzhe ssh --progress tock root@104.236.48.36:/root
 As a work of the United States Government, this project is in the
 public domain within the United States.
 
