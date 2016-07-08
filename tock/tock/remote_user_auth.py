@@ -15,7 +15,7 @@ def email_to_username(email):
         if email_list[1] in settings.ALLOWED_EMAIL_DOMAINS:
             pass
         else:
-            raise ValidationError('Email Domain not in Allowed List')
+            pass
 
     # Return the email address with only the first 30 characters, this is the
     # username

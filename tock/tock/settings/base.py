@@ -46,19 +46,18 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'tock.remote_user_auth.EmailHeaderMiddleware',
-    'tock.remote_user_auth.UserDataMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 AUTHENTICATION_BACKENDS = (
-    'tock.remote_user_auth.TockUserBackend',
+    ['django.contrib.auth.backends.ModelBackend']
 )
 
 LANGUAGE_CODE = 'en-us'
