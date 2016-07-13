@@ -10,6 +10,7 @@ from django.contrib.auth import get_user_model
 
 from projects.models import Project
 from hours.models import TimecardObject, Timecard, ReportingPeriod
+from employees.models import UserData
 
 from rest_framework import serializers, generics, pagination
 
@@ -61,13 +62,29 @@ class UserSerializer(serializers.ModelSerializer):
             'email'
         )
 
+class UserDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserData
+        fields = (
+            'user',
+            'start_date',
+            'end_date',
+            'current_employee',
+            'is_18f_employee',
+            'is_billable',
+            'unit',
+        )
+
+
 class ReportingPeriodSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReportingPeriod
         fields = (
             'start_date',
             'end_date',
-            'working_hours',
+            'exact_working_hours',
+            'min_working_hours',
+            'max_working_hours',
         )
 
 class TimecardSerializer(serializers.Serializer):
@@ -97,7 +114,21 @@ class BulkTimecardSerializer(serializers.Serializer):
     mbnumber = serializers.CharField(source='project.mbnumber')
     notes = serializers.CharField()
 
+class SlimBulkTimecardSerializer(serializers.Serializer):
+    project_name = serializers.CharField(source='project.name')
+    employee = serializers.StringRelatedField(source='timecard.user')
+    start_date = serializers.DateField(source='timecard.reporting_period.start_date')
+    end_date = serializers.DateField(source='timecard.reporting_period.end_date')
+    hours_spent = serializers.DecimalField(max_digits=5, decimal_places=2)
+    billable = serializers.BooleanField(source='project.accounting_code.billable')
+    mbnumber = serializers.CharField(source='project.mbnumber')
+
 # API Views
+
+class UserDataView(generics.ListAPIView):
+    queryset = UserData.objects.all()
+    serializer_class = UserDataSerializer
+    pagination_class = JumboResultsSetPagination
 
 class ProjectList(generics.ListAPIView):
     queryset = Project.objects.all()
@@ -267,7 +298,6 @@ def get_timecards(queryset, params=None):
 
     return queryset
 
-
 def bulk_timecard_list(request):
     """
     Stream all the timecards as CSV.
@@ -275,6 +305,15 @@ def bulk_timecard_list(request):
     queryset = get_timecards(TimecardList.queryset, request.GET)
     serializer = BulkTimecardSerializer()
     return stream_csv(queryset, serializer)
+
+def slim_bulk_timecard_list(request):
+    """
+    Stream a slimmed down version of all the timecards as CSV.
+    """
+    queryset = get_timecards(TimecardList.queryset, request.GET)
+    serializer = SlimBulkTimecardSerializer()
+    return stream_csv(queryset, serializer)
+
 
 
 from rest_framework.response import Response

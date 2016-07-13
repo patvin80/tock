@@ -3,6 +3,7 @@
 {% block content %}
 <h2>Tell us about your time for <font color='#2c5999'> {{ object.reporting_period.start_date }} to {{ object.reporting_period.end_date }}</font></h2>
 
+<<<<<<< HEAD
 
 {% if messages %}
 <ul class="messages">
@@ -12,11 +13,17 @@
 </ul>
 {% endif %}
 
+=======
+<div class="clear-fix">
+  <div class="alert-grey">
+    <p class="alert-body">
+      <b>Reminder!</b> Please log 8 hours <b>'Out of Office - Administrative/Holiday Leave'</b> for the time period July 3rd - July 9th for Independence Day. Note that this leave <b> does not </b> need to be entered into <b><a href="https://aloha.gsa.gov/"> ALOHA </a></b> (GSA's official leave processing system).
+    </p>
+  </div>
+</div>
+>>>>>>> 18F/master
 <form class="form-horizontal form-inline" method="post">
   {% csrf_token %}
-  {% if formset.errors %}
-    <div class="form-error">{{ formset.non_form_errors }}</div>
-  {% endif %}
   {{ formset.management_form }}
   <div class="entries">
     <ul class="entries-header">
@@ -59,6 +66,16 @@
       </div>
     {% endfor %}
   </div>
+  {% if formset.errors %}
+    <div class="alert-red"><b>{{ formset.non_form_errors }}</b></div>
+  {% endif %}
+  {% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <b><li{% if message.tags %} class="alert-{{ message.tags }}"{% endif %}>{{ message }}</li></b>
+    {% endfor %}
+  </ul>
+  {% endif %}
   <div class="entries-total">
     <div class="entries-add-more"></br>
       <button type="button" class="btn btn-info add-timecard-entry">Add More Items</a>
@@ -73,6 +90,7 @@
     </div>
   </div>
  </form>
+
 
  <script>
  function getHourTotals() {
@@ -158,6 +176,10 @@
 
 
 $( document ).ready(function() {
+    var chosenOptions = {
+      search_contains: true
+    };
+
     $("#save-timecard").on("click", function() {
       var form = $('form'),
           save_input = '<input type="hidden" name="save_only" value="1"/>';
@@ -199,26 +221,27 @@ $( document ).ready(function() {
           });
 
         }).appendTo('.entries');
-        $(".entry-project select").chosen();
+        
+        $(".entry-project select")
+          .chosen(chosenOptions)
+          .on('change', function(e) {
+              toggleNotesField(this);
+              displayAlerts(this);
+          });
 
         // Increment the TOTAL_FORMS
         $('#id_timecardobject_set-TOTAL_FORMS').val(parseInt($('#id_timecardobject_set-TOTAL_FORMS').val()) + 1);
-
-        // Rebind events.
-        $('.entry-project select').chosen().on('change', function(e) {
-            toggleNotesField(this);
-            displayAlerts(this);
-        });
-    });
-
-    $('.entry-project select').chosen().on('change', function(e) {
-        toggleNotesField(this);
-        displayAlerts(this);
     });
 
     // Run on initial load
     populateHourTotals();
-    $('.entry-project select').chosen();
+
+    $('.entry-project select')
+      .chosen(chosenOptions)
+      .on('change', function(e) {
+          toggleNotesField(this);
+          displayAlerts(this);
+      });
 
     // Force an update to each project selection menu in case a notes field
     // needs to be re-displayed.
